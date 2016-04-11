@@ -1,9 +1,9 @@
+#coding=utf-8
 import urllib
 import urllib2
 import cookielib
 import json
 
-#def login():
 "cookie init"
 cookies = cookielib.CookieJar()
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookies))

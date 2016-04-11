@@ -20,27 +20,31 @@ def run(name, number):
         #数据处理
         content = BeautifulSoup(c.read())
         answers = content.find(id = "zh-profile-answer-list")
-
         answer = answers.div
         if answer == None:
             break
-
+       
         while True:
             #被折叠的回答～
             if answer.textarea != None:
+                #print answer
                 tag_as = answer.find_all('a')
                 for a in tag_as:
-                    #点赞数
-                    if a['class'] == 'zm-item-vote-count js-expand js-vote-count':
-                        if 'K' in a.string:
-                            k = (float(re.sub('K', '', a.string))*1000) ** 0.5
-                        elif 'W' in a.string:
-                            k = (float(re.sub('W', '', a.string))*10000) ** 0.5    
-                        else:
-                            k = float(a.string)**0.5
-                    #问题标题
-                    if a['class'] == 'question_link' :
-                        answer_string = a.string + ' '
+                    try:
+                        #点赞数
+                        if a['class'] == 'zm-item-vote-count js-expand js-vote-count':
+                            if 'K' in a.string:
+                                k = (float(re.sub('K', '', a.string))*1000) ** 0.5
+                            elif 'W' in a.string:
+                                k = (float(re.sub('W', '', a.string))*10000) ** 0.5    
+                            else:
+                                k = float(a.string)**0.5
+                        #问题标题
+                        if a['class'] == 'question_link' :
+                            answer_string = a.string + ' '
+                    except:
+                        #跳过无效的a标签
+                        continue
                 #回答
                 answer_string += answer.textarea.get_text()
                 answer_string = re.sub('[A-Za-z0-9]', '', answer_string)

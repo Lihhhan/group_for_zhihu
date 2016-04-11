@@ -1,14 +1,18 @@
 #coding=utf-8
-import mylog
 import login
 import conf
 import spider
 import sys
+import logging
 
 reload(sys)
 sys.setdefaultencoding( "utf-8" )
 
-log = mylog.Log('./log/spider.log')
+logging.basicConfig(level=logging.DEBUG,
+    format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+    datefmt='%a, %d %b %Y %H:%M:%S',
+    filename='myapp.log',
+    filemode='w')
 
 login.login()
 
@@ -16,8 +20,8 @@ res = {}
 wordlist = {}
 for person in conf.persons:
     res[person] = spider.run(person, 100)
+    logging.info('%s\tdownloaded!'%person)
     f = open('./data/'+person, 'w')
-    log.add(person + ' downloaded!')
     for word in res[person]:
         #写入临时文件
         f.write('%s\t' % word)
@@ -33,7 +37,7 @@ for person in conf.persons:
 #筛选重复率高和低的词
 for word, count in wordlist.items():
     if float(count)/len(res) < 0.1 or float(count)/len(res) > 0.5:
-        wrodlist.pop(word)
+        wordlist.pop(word)
 
 #把计数矩阵写入文件
 f = open('./data/data.txt', 'w')

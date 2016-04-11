@@ -2,6 +2,8 @@
 from bs4 import BeautifulSoup
 import urllib2
 import jieba
+import jieba.analyse
+import re
 
 def run(name, number):
     i = 0
@@ -20,19 +22,44 @@ def run(name, number):
         answers = content.find(id = "zh-profile-answer-list")
 
         answer = answers.div
+        if answer == None:
+            break
+
         while True:
             #被折叠的回答～
             if answer.textarea != None:
                 tag_as = answer.find_all('a')
-                for a in tag_as: 
-                    if a['class'] == 'question_link' or a['class'] == 'zm-item-vote-count js-expand js-vote-count':
-                        print a.string
-                print answer.textarea.get_text()
-            
+                for a in tag_as:
+                    #点赞数
+                    if a['class'] == 'zm-item-vote-count js-expand js-vote-count':
+                        if 'K' in a.string:
+                            k = (float(re.sub('K', '', a.string))*1000) ** 0.5
+                        elif 'W' in a.string:
+                            k = (float(re.sub('W', '', a.string))*10000) ** 0.5    
+                        else:
+                            k = float(a.string)**0.5
+                    #问题标题
+                    if a['class'] == 'question_link' :
+                        answer_string = a.string + ' '
+                #回答
+                answer_string += answer.textarea.get_text()
+                answer_string = re.sub('[A-Za-z0-9]', '', answer_string)
+
+                #分词提取关键字
+                keywords = jieba.analyse.extract_tags(answer_string, 60, True)
+                for keyword in keywords:
+                    if keyword[0] in wordcount:
+                        wordcount[keyword[0]] += keyword[1]*k
+                    else:
+                        wordcount[keyword[0]] = keyword[1]*k
+
             answer = answer.next_sibling.next_sibling
             if answer == None:
                 break
 
+    #for word in wordcount:
+    #    print word,wordcount[word]
+    return wordcount
 
 
 

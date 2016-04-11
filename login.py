@@ -18,7 +18,7 @@ def login():
     for cookie in cookies:
         if cookie.name == '_xsrf' :
             form['_xsrf'] = cookie.value
-    form['password'] = 'qwe383548557'
+    form['password'] = ''
     form['email'] = '136081054@qq.com'
     form['remember_me'] = False
 

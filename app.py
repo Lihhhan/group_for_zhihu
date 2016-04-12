@@ -1,9 +1,6 @@
 #coding=utf-8
-import login
-import conf
-import spider
-import sys
-import logging
+import login, conf, spider
+import sys, logging
 
 reload(sys)
 sys.setdefaultencoding( "utf-8" )
@@ -19,7 +16,7 @@ login.login()
 res = {}
 wordlist = {}
 for person in conf.persons:
-    res[person] = spider.run(person, 100)
+    res[person] = spider.run(person, 1000)
     logging.info('%s\tdownloaded!'%person)
     f = open('./data/'+person, 'w')
     for word in res[person]:

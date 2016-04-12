@@ -50,7 +50,7 @@ def run(name, number):
                 answer_string = re.sub('[A-Za-z0-9]', '', answer_string)
 
                 #分词提取关键字
-                keywords = jieba.analyse.extract_tags(answer_string, 60, True)
+                keywords = jieba.analyse.extract_tags(answer_string, 100, True)
                 for keyword in keywords:
                     if keyword[0] in wordcount:
                         wordcount[keyword[0]] += keyword[1]*k
